@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.EquipmentOwnerChangeRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.EquipmentOwnerChangeRecordEntity" id="equipmentOwnerChangeRecordMap">
+        <result property="id" column="id"/>
+        <result property="equipmentOwnerId" column="equipment_owner_id"/>
+        <result property="meterBoxId" column="meter_box_id"/>
+        <result property="changer" column="changer"/>
+        <result property="changeTime" column="change_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+
+</mapper>

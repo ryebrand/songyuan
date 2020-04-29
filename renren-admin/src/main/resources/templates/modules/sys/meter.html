@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>电能表表</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("sys:meter:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:meter:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:meter:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电表箱id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.meterBoxId" placeholder="电表箱id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电能表资产号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.energyMeterAssetNumber" placeholder="电能表资产号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">户名</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.accountName" placeholder="户名"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">户号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.accountNumber" placeholder="户号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户电话</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.userPhone" placeholder="用户电话"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">箱表关系</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.boxRelationship" placeholder="箱表关系"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">隔离开关资产号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.isolationSwitchAssetNumber" placeholder="隔离开关资产号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">断路器资产号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.circuitBreakerAssetNumber" placeholder="断路器资产号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">互感器资产号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.transformerAssetNumber" placeholder="互感器资产号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电能表封印</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.electricEnergyMeterSeal" placeholder="电能表封印"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">删除状态 ：0：使用 1：删除 </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="meter.deleteStatus" placeholder="删除状态 ：0：使用 1：删除 "/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/meter.js?_${.now?long}"></script>
+</body>
+</html>

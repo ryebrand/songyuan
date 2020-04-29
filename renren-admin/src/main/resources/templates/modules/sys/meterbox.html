@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>计量箱表</title>
+		<#include "/header.html">
+    <style>
+        .content{
+            width: 95%;
+            height: 100%;
+            padding: 20px 20px 20px 20px;
+        }
+        .detailTitle{
+            width: 10%;
+            float: left;
+            line-height: 5%;
+        }
+        .detailContent{
+            float: left;
+            width: 40%;
+            line-height: 5%;
+        }
+    </style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.meterBoxAssetNumber" @keyup.enter="query" placeholder="请输入表箱资产号">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.address" @keyup.enter="query" placeholder="请输入村庄或校区名称">
+            </div>
+
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.taiAreaName" @keyup.enter="query" placeholder="请输入台区名称">
+            </div>
+            <label >
+                表箱运行状态：
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="status" value="'运行'" v-model="meterBoxStatus">
+                运行
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="status" value="'在库'" v-model="meterBoxStatus">
+                在库
+            </label>
+            &nbsp;&nbsp;
+            <a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+
+            <#if shiro.hasPermission("sys:meterbox:save")>
+            <a class="btn btn-success" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:meterbox:update")>
+            <a class="btn btn-warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+<!--    <br>-->
+<!--    <br>-->
+<!--    &nbsp;&nbsp;&nbsp;&nbsp;-->
+            <#if shiro.hasPermission("sys:watchbox:upload")>
+            <a class="btn btn-success"  href="${request.contextPath}/statics/file/导入模板.xlsx"><i
+                    class="fa fa-download"
+                    aria-hidden="true"></i>下载模板</a>
+            <a class="btn btn btn-success" ><i class="fa fa-upload" id="importtable">&nbsp;导入数据</i></a>
+            </#if>
+<!--			<#if shiro.hasPermission("sys:meterbox:delete")>-->
+<!--            <a class="btn btn-danger" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+<!--			</#if>-->
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="addAndUpdate" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+
+            <div class="form-group">
+                <div class="col-sm-2 control-label">计量箱资产号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.meterBoxAssetNumber" placeholder="计量箱资产号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">台区名称</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.taiAreaName" placeholder="台区名称"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">台区经理姓名</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.taiAreaManagerName" placeholder="台区经理姓名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">台区经理工作电话</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.taiAreaManagerWorkPhone" placeholder="台区经理工作电话"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">台区经理电话</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.taiAreaManagerPhone" placeholder="台区经理电话"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">台区总表资产号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.taiAreaTotalAssetNumber" placeholder="台区总表资产号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">总电能表封印</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.totalEnergyMeterSeal" placeholder="总电能表封印"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">供电所</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.powerSupply" placeholder="供电所"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">计量箱规格型号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.meterBoxModel" placeholder="计量箱规格型号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">位置：村庄（小区）名称</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.address" placeholder="位置：村庄（小区）名称"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">倍率</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.magnification" placeholder="倍率"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">计量箱编号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.meterBoxNumber" placeholder="计量箱编号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">集中器资产号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.concentratorAssetNumber" placeholder="集中器资产号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">计量箱地址（经纬度）</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.meterBoxAddress" placeholder="计量箱地址（经纬度）"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">采集终端资产号</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.acquisitionTerminalAssetNumber" placeholder="采集终端资产号"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">集中器封印</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="meterBox.concentratorSeal" placeholder="集中器封印"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">计量箱状态</div>
+                <div class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input type="radio"   name="status" value="'运行'" v-model="meterBox.meterBoxStatus">
+                        运行
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="radio"   name="status" value="'在库'" v-model="meterBox.meterBoxStatus">
+                        在库
+                    </label>
+                </div>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <div class="col-sm-2 control-label">设备责任人id</div>-->
+<!--                <div class="col-sm-10">-->
+<!--                    <input type="text" class="form-control" v-model="meterBox.equipmentOwnerId" placeholder="设备责任人id"/>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+
+    <div id="changeOwnerShow" style="display: none;">
+            <div class="grid-btn">
+                <div class="form-group col-xs-2">
+                    <input type="text" class="form-control" v-model="oq.username" @keyup.enter="oQuery" placeholder="请输入用户名">
+                </div>
+                <div class="form-group col-xs-2">
+                    <input type="text" class="form-control" v-model="oq.mobile" @keyup.enter="oQuery" placeholder="请输入手机号">
+                </div>
+
+                <div class="form-group col-xs-2">
+                    <input type="text" class="form-control" v-model="oq.name" @keyup.enter="oQuery" placeholder="请输入姓名">
+                </div>
+                <a class="btn btn-primary"  @click="oQuery"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-success"  @click="changeOwner"><i class="fa fa-search"></i>&nbsp;更改责任人</a>
+            </div>
+        <table id="ownerjqGrid"></table>
+        <div id="ownerjqGridPager"></div>
+        </div>
+
+
+    <div id="changeType"  style="display: none;margin: 20px 20px 20px 20px">
+        <label class="radio-inline">
+            <input type="radio" name="changeType"  value="1" v-model="acceptanceType"  > 改造
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="changeType"  value="2" v-model="acceptanceType" >更换
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="changeType" value="3" v-model="acceptanceType" > 消缺
+        </label>
+    </div>
+
+
+    <div v-show="details" class="panel panel-default">
+        <a class="btn btn-warning" @click="reload"><i class="fa fa-arrow-left"></i>&nbsp;返回</a>
+        <div class="panel-heading">计量箱详情</div>
+        <div class="row">
+            <div class="col-sm-5"><h4>计量箱资产号:<strong v-html="meterBoxDet.meterBoxAssetNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区名称 :<strong v-html="meterBoxDet.taiAreaName">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区经理 :<strong v-html="meterBoxDet.taiAreaManagerName">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区经理手机号 :<strong v-html="meterBoxDet.taiAreaManagerPhone">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区经理工作电话 :<strong v-html="meterBoxDet.taiAreaManagerWorkPhone">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区总表资产号 :<strong v-html="meterBoxDet.taiAreaTotalAssetNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>台区总电能表封印 :<strong v-html="meterBoxDet.totalEnergyMeterSeal">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>供电所 :<strong v-html="meterBoxDet.powerSupply">加载中</strong ></h4></div>
+            <div class="col-sm-5"><h4>计量箱规格型号 :<strong v-html="meterBoxDet.meterBoxModel">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>村庄（小区）名称 :<strong v-html="meterBoxDet.address">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>倍率 :<strong v-html="meterBoxDet.magnification">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>计量箱编号 :<strong v-html="meterBoxDet.meterBoxNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>集中器资产号 :<strong v-html="meterBoxDet.concentratorAssetNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>计量箱地址 :<strong v-html="meterBoxDet.meterBoxAddress">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>采集终端资产号 :<strong v-html="meterBoxDet.acquisitionTerminalAssetNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>集中器封印 :<strong v-html="meterBoxDet.concentratorSeal">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>计量箱状态 :<strong v-html="meterBoxDet.meterBoxStatus">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>设备责任人 :<strong v-html="meterBoxDet.name">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>设备责任人手机 :<strong v-html="meterBoxDet.phoneNumber">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>设备责任人工作电话 :<strong v-html="meterBoxDet.studioCamera">加载中</strong></h4></div>
+        </div>
+
+    </div>
+
+</div>
+<script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/meterbox.js?_${.now?long}"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.InspectionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.InspectionEntity" id="inspectionMap">
+        <result property="id" column="id"/>
+        <result property="htUserId" column="ht_user_id"/>
+        <result property="malfunctionId" column="malfunction_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+    <resultMap type="io.renren.modules.sys.entity.InspectionEntity" id="baseMap">
+        <result property="htUserId" column="ht_user_id"/>
+        <result property="malfunctionId" column="malfunction_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectByCreateTimeAndOwnerName" resultType="io.renren.modules.sys.dto.InspectionDto">
+        SELECT
+        inspection.ht_user_id,
+        inspection.malfunction_id,
+        inspection.create_time,
+        inspection.user_id,
+
+        ht_user.user_name as ht_user_name,
+        ht_user.elec_address,
+        ht_user.check_cycle,
+
+        tb_user.username,
+        tb_user.mobile,
+
+        malfunction.image
+
+        FROM
+        inspection
+        LEFT JOIN ht_user ON ht_user.user_id = inspection.ht_user_id
+        LEFT JOIN tb_user ON tb_user.user_id = inspection.user_id
+        LEFT JOIN malfunction ON inspection.malfunction_id = malfunction.id
+
+        WHERE
+        1 = 1
+        <if test="bixId!=-1">
+            AND inspection.ht_user_id = #{bixId}
+        </if>
+        <if test="start!=null and start!=''  and end!=null and end!=''">
+            AND inspection.create_time BETWEEN #{start}
+            AND #{end}
+        </if>
+        ORDER BY inspection.create_time DESC
+
+        <!--SELECT
+        inspection.id,
+        inspection.create_time,
+        inspection.malfunction_id,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.address,
+        meter_box.meter_box_status,
+        equipment_owner.`name`,
+        equipment_owner.phone_number,
+        malfunction.image
+        FROM
+        inspection
+        LEFT JOIN meter_box ON inspection.meter_box_id = meter_box.id
+        LEFT JOIN equipment_owner ON meter_box.equipment_owner_id = equipment_owner.id
+        LEFT JOIN malfunction ON inspection.malfunction_id = malfunction.id
+        WHERE
+        1 = 1
+        <if test="bixId!=-1">
+            AND inspection.meter_box_id = #{bixId}
+        </if>
+        <if test="start!=null and start!=''  and end!=null and end!=''">
+            AND inspection.create_time BETWEEN #{start}
+            AND #{end}
+        </if>
+        <if test="name!=null and name!=''">
+            AND equipment_owner.`name` LIKE '%${name}%'
+        </if>
+        ORDER BY inspection.create_time DESC-->
+    </select>
+    <select id="getInspectionList" resultMap="baseMap">
+        <!-- 获取对应用户的缺陷记录 -->
+        <!-- select t.meter_box_id,t.malfunction_id,t.create_time,t.user_id from inspection t where t.user_id=#{userid} limit #{page},#{pageSize}; -->
+        select t.meter_box_id,t.malfunction_id,t.create_time,t.user_id from inspection t limit #{page},#{pageSize};
+    </select>
+
+    <select id="countByNowMonth" resultType="integer">
+        SELECT
+            count( 1 ) AS count
+        FROM
+            inspection
+        WHERE
+            DATE_FORMAT( create_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ), '%Y%m' )
+    </select>
+
+    <select id="getInspectedMeterCountByCondition" resultType="int">
+        select count(t1.id) as inspectedMeter
+        from inspection t1,malfunction t2,meter_box t3 where t1.malfunction_id=t2.id and t1.meter_box_id =t3.id and t2.type=0
+        and t1.create_time between #{startTime} and #{endTime}
+        and t3.tai_area_name=#{taiAreaName} and t3.power_supply=#{powerSupply}
+    </select>
+
+
+    <select id="groupByCreateTime" resultType="io.renren.modules.sys.dto.CreateTimeGroupDto">
+SELECT
+	DATE_FORMAT( create_time, '%Y-%m-%d' ) AS days,
+	COUNT( 1 ) AS num
+FROM
+	inspection
+WHERE
+	create_time BETWEEN '${start}'
+	AND '${end}'
+GROUP BY
+	DATE_FORMAT( create_time, '%Y-%m-%d' )
+ORDER BY
+	days DESC
+    </select>
+</mapper>

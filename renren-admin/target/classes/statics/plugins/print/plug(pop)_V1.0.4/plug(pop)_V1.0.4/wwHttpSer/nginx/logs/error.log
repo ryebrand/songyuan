@@ -1,0 +1,10 @@
+2019/01/22 16:21:45 [error] 9644#9924: *1 CreateFile() "C:\Users\hcou\Downloads\nginx-1.14.2/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "127.0.0.1", referrer: "http://127.0.0.1/"
+2019/01/22 16:39:10 [emerg] 9512#1784: unexpected "}" in C:\Users\hcou\Downloads\nginx-1.14.2/conf/nginx.conf:113
+2019/01/23 11:05:03 [emerg] 3508#2336: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\新建文件夹\nginx/conf/nginx.conf" failed (1113: No mapping for the Unicode character exists in the target multi-byte code page)
+2019/01/23 11:06:45 [emerg] 8508#8560: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\x新\nginx/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/01/23 11:07:07 [emerg] 224#6460: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\x新\nginx/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/01/23 11:07:32 [emerg] 5168#3332: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\新\nginx/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/01/23 11:09:01 [emerg] 908#6756: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\新\nginx/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/01/23 11:09:11 [emerg] 2552#5456: CreateFile() "C:\Users\hcou\Documents\wwHttpSer\新\nginx/conf/nginx.conf" failed (3: The system cannot find the path specified)
+2019/01/24 15:31:21 [emerg] 15052#11196: CreateFile() "J:\工作备份\插件版本\通用版本\plug(pop)_V1.0.3\wwHttpSer\nginx/conf/nginx.conf" failed (1113: No mapping for the Unicode character exists in the target multi-byte code page)
+2019/01/24 15:36:56 [emerg] 1440#15112: CreateFile() "J:\工作备份\插件版本\通用版本\plug(pop)_V1.0.3\wwHttpSer\nginx/conf/nginx.conf" failed (1113: No mapping for the Unicode character exists in the target multi-byte code page)

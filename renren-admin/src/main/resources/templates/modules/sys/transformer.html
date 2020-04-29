@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <!--<div class="grid-btn">
+			&lt;!&ndash;<#if shiro.hasPermission("sys:transformer:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>&ndash;&gt;
+			&lt;!&ndash;<#if shiro.hasPermission("sys:transformer:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:transformer:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>&ndash;&gt;
+        </div>-->
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                        <div class="col-sm-2 control-label">互感器编号</div>
+                            <div class="col-sm-10">
+                                <input maxlength="30" type="text"  id="transformCode" class="form-control" v-model="transformer.transformCode" placeholder="互感器编号"/>
+                            </div>
+                        </div>
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">互感器类别</div>
+                        <div class="col-sm-10">
+                            <select name="transformCategory" class="form-control" id="transformCategory">
+                                <option value="电流互感器" selected>电流互感器</option>
+                                <option value="电压互感器">电压互感器</option>
+                            </select>
+<!--                            <input type="text" class="form-control" v-model="transformer.transformCategory" placeholder="互感器类别"/>-->
+                        </div>
+                    </div>
+											                    <div class="form-group" id="voltage" style="display:none">
+                        <div class="col-sm-2 control-label">电压互感器变比</div>
+                        <div class="col-sm-10">
+                            <input maxlength="30" type="text" id="voltageVar"  class="form-control" v-model="transformer.voltageVar" placeholder="电压互感器变比"/>
+                        </div>
+                    </div>
+											                    <div class="form-group" id="current" >
+                        <div class="col-sm-2 control-label">电流互感器变比</div>
+                        <div class="col-sm-10">
+                            <input maxlength="30" type="text" id="currentVal" class="form-control" v-model="transformer.currentVal" placeholder="电流互感器变比"/>
+                        </div>
+                    </div>
+											                    <!--<div class="form-group" style="display: none">
+                        <div class="col-sm-2 control-label">高压用户id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="transformer.htUserId" placeholder="高压用户id"/>
+                        </div>
+                    </div>-->
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/transformer.js?_${.now?long}"></script>
+</body>
+</html>

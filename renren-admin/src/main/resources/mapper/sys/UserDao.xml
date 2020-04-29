@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.UserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.UserEntity" id="userMap">
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="mobile" column="mobile"/>
+        <result property="password" column="password"/>
+        <result property="createTime" column="create_time"/>
+        <result property="name" column="name"/>
+    </resultMap>
+    <resultMap type="io.renren.modules.sys.entity.UserEntity" id="baseMap">
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getUserIdByUserName" parameterType="String" resultMap="baseMap">
+        select t.user_id,t.name from tb_user t
+        where t.username=#{username}
+        and del_status = 0
+    </select>
+    <select id="getUserById" parameterType="long" resultMap="userMap">
+        select t.user_id,t.username,t.mobile,t.password,t.create_time,t.name
+        from tb_user t
+        where t.user_id=#{id}
+        and del_status = 0
+    </select>
+
+    <update id="removeById">
+        update tb_user set del_status = 1
+        where user_id = #{serializable}
+    </update>
+
+    <select id="getList" resultMap="baseMap">
+        select * from tb_user where del_status = 0
+    </select>
+
+</mapper>

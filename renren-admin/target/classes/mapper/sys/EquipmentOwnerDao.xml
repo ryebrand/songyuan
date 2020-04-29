@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.EquipmentOwnerDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.EquipmentOwnerEntity" id="equipmentOwnerMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="createDate" column="create_date"/>
+        <result property="position" column="position"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+    <select id="getOwnerById" parameterType="long" resultMap="equipmentOwnerMap">
+        select t.id,t.name,t.phone_number,t.create_date,t.position,t.delete_status from equipment_owner t where t.id=#{id};
+    </select>
+    <select id="getOwnerByMeterBoxId" parameterType="long" resultMap="equipmentOwnerMap">
+        select t.name from equipment_owner t where t.id=#{id};
+    </select>
+
+    <select id="selectByPhoneNumber" resultType="integer">
+        SELECT
+        id
+        FROM
+        equipment_owner
+        <where>
+            <if test="phoneNumber!=null  and phoneNumber!=''">
+                equipment_owner.phone_number=${phoneNumber}
+            </if>
+        </where>
+    </select>
+
+    <select id="getOwnerByName" resultType="long">
+        select user_id
+        from tb_user
+        where username = #{name}
+    </select>
+
+    <select id="getCount" resultType="integer">
+        select count(*)
+        from tb_user
+    </select>
+
+    <select id="list" resultType="io.renren.modules.sys.entity.UserEntity">
+        select user_id,username
+        from tb_user
+    </select>
+
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.MeterBoxDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.MeterBoxEntity" id="meterBoxMap">
+        <result property="id" column="id"/>
+        <result property="meterBoxAssetNumber" column="meter_box_asset_number"/>
+        <result property="taiAreaName" column="t_area_name"/>
+        <result property="taiAreaTotalAssetNumber" column="t_area_total_asset_number"/>
+        <result property="totalEnergyMeterSeal" column="total_energy_meter_seal"/>
+        <result property="powerSupply" column="power_supply"/>
+        <result property="meterBoxModel" column="meter_box_model"/>
+        <result property="address" column="address"/>
+        <result property="magnification" column="magnification"/>
+        <result property="meterBoxNumber" column="meter_box_number"/>
+        <result property="meterBoxAddress" column="meter_box_address"/>
+        <result property="acquisitionTerminalAssetNumber" column="acquisition_terminal_asset_number"/>
+        <result property="meterBoxStatus" column="meter_box_status"/>
+        <result property="equipmentOwnerId" column="equipment_owner_id"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <resultMap id="baseMap" type="io.renren.entity.MeterBoxEntity">
+        <result property="meterBoxAssetNumber" column="meter_box_asset_number"/>
+        <result property="equipmentOwnerId" column="equipment_owner_id"/>
+    </resultMap>
+
+    <select id="getMeterBoxAssetNumberById" resultType="io.renren.controller.VO.HtUserVO">
+        select * from ht_user t where t.user_id=#{id}
+    </select>
+
+    <select id="selectByMeterBoxAssetNumber" resultType="io.renren.controller.VO.HtUserVO">
+
+        select ht_user.*,e.check_user_name from ht_user
+        left join
+        (select user_id,username as check_user_name from tb_user )e
+        on e.user_id = ht_user.check_user
+        WHERE
+        1=1
+        AND ht_user.del_status=0
+        <if test="meterBoxId!=null">
+            AND ht_user.user_id ='${meterBoxId}'
+        </if>
+
+    </select>
+
+
+    <select id="selectByUserId" parameterType="Long" resultType="io.renren.controller.VO.HtUserVTO">
+        SELECT t.*,temp.* from
+            (SELECT inspection.malfunction_id,
+                inspection.user_id as check_user,
+                inspection.ht_user_id,
+                inspection.create_time
+            FROM inspection where inspection.user_id = #{userId} limit 1000) t
+            left join (
+            select ht_user.*,e.check_user_name from ht_user
+                    left join
+                    (select user_id,username as check_user_name from sys_user)e
+                    on e.user_id = ht_user.check_user
+                            and ht_user.del_status = 0) temp
+                            on t.ht_user_id = temp.user_id
+                            order by t.create_time desc
+    </select>
+
+
+    <select id="searchByAssetNumberOrAdderss" resultType="io.renren.controller.VO.HtUserVO">
+
+        select hu.*,tb_user.username as check_user_name from
+            (select ht_user.* from ht_user
+
+            <if test="assetNumberOrAddress!=null and assetNumberOrAddress!=''">
+                where ht_user.assets_code LIKE '%${assetNumberOrAddress}%'
+                OR ht_user.elec_address LIKE '%${assetNumberOrAddress}%'
+                OR ht_user.user_id LIKE '%${assetNumberOrAddress}%'
+            </if>
+            ) hu
+
+        left join tb_user
+        on tb_user.user_id = hu.check_user
+        where
+        hu.del_status = 0
+        <if test="userId != 1">
+            and hu.check_user = #{userId}
+        </if>
+        ORDER BY hu.check_date_after asc
+
+        <!--select ht_user.*,e.check_user_name from ht_user
+        left join
+        (select user_id,username as check_user_name from tb_user )e
+        on e.user_id = ht_user.check_user
+
+        <where>
+            <if test="userId != 1">
+                AND e.user_id = #{userId}
+            </if>
+            <if test="assetNumberOrAddress!=null and assetNumberOrAddress!=''">
+                AND ht_user.assets_code LIKE '%${assetNumberOrAddress}%'
+                OR ht_user.elec_address LIKE '%${assetNumberOrAddress}%'
+                OR ht_user.user_id LIKE '%${assetNumberOrAddress}%'
+            </if>
+            AND ht_user.del_status = 0
+        </where>
+        ORDER BY ht_user.check_date_after asc-->
+    </select>
+
+    <update id="updteByUserId">
+        update ht_user
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="elecCategory != null" >
+                elec_category = #{elecCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="userCategory != null" >
+                user_category = #{userCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="loadProperty != null" >
+                load_property = #{loadProperty,jdbcType=VARCHAR},
+            </if>
+            <if test="elecAddress != null" >
+                elec_address = #{elecAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="checkUser != null" >
+                check_user = #{checkUser,jdbcType=INTEGER},
+            </if>
+            <if test="checkCycle != null" >
+                check_cycle = #{checkCycle,jdbcType=INTEGER},
+            </if>
+            <if test="checkDateBefore != null" >
+                check_date_before = #{checkDateBefore,jdbcType=TIMESTAMP},
+            </if>
+            <if test="checkDateAfter != null" >
+                check_date_after = #{checkDateAfter,jdbcType=TIMESTAMP},
+            </if>
+            <if test="elecCode != null" >
+                elec_code = #{elecCode,jdbcType=VARCHAR},
+            </if>
+            <if test="collectCode != null" >
+                collect_code = #{collectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="assetsCode != null" >
+                assets_code = #{assetsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null" >
+                lat = #{lat},
+            </if>
+            <if test="lng != null" >
+                lng = #{lng},
+            </if>
+        </set>
+        WHERE user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.RegionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.RegionEntity" id="regionMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="userId" column="user_id"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+    <select id="getRegionById" parameterType="long" resultMap="regionMap">
+select t.id,t.name,t.user_id,t.delete_status from region t where t.id=#{id};
+    </select>
+
+    <select id="pageList" resultType="io.renren.modules.sys.dto.RegionDto">
+        SELECT
+        region.`name`,
+        region.id,
+        tb_user.mobile,
+        tb_user.`name` AS tb_user_name,
+        tb_user.username
+        FROM
+        region
+        LEFT JOIN tb_user ON region.user_id = tb_user.user_id
+        <where>
+            <if test="name!=null and name!=''">
+                region.`name` LIKE '%${name}%'
+            </if>
+            <if test="username!=null and username!=''">
+                AND tb_user.username LIKE '%${username}%'
+            </if>
+            <if test="tbUserName!=null and  tbUserName!=''">
+                AND tb_user.`name` LIKE '%${tbUserName}%'
+            </if>
+        </where>
+    </select>
+</mapper>

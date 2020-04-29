@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.HtUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.HtUserEntity" id="htUserMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="elecCategory" column="elec_category"/>
+        <result property="userCategory" column="user_category"/>
+        <result property="loadProperty" column="load_property"/>
+        <result property="elecAddress" column="elec_address"/>
+        <result property="checkUser" column="check_user"/>
+        <result property="checkCycle" column="check_cycle"/>
+        <result property="checkDateBefore" column="check_date_before"/>
+        <result property="checkDateAfter" column="check_date_after"/>
+        <result property="elecCode" column="elec_code"/>
+        <result property="collectCode" column="collect_code"/>
+        <result property="assetsCode" column="assets_code"/>
+    </resultMap>
+
+    <update id="removeById" parameterType="string">
+        update ht_user set del_status = 1
+        where user_id = #{id}
+    </update>
+
+    <select id="listByAssetcodeAndUser" resultType="io.renren.modules.sys.controller.VO.HtUserVO">
+        select ht_user.*,e.check_user_name from ht_user
+        left join
+        (select user_id,username as check_user_name from tb_user )e
+        on e.user_id = ht_user.check_user
+        WHERE
+        ht_user.del_status = 0
+        AND
+        1 = 1
+        <if test="htUserId!=null and htUserId!=''">
+            AND ht_user.user_id LIKE CONCAT('%', #{htUserId, jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="address!=null and address!=''">
+            AND ht_user.elec_address LIKE CONCAT('%', #{address, jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="name!=null and name!=''">
+            AND e.check_user_name LIKE CONCAT('%', #{name, jdbcType=VARCHAR}, '%')
+        </if>
+    </select>
+
+    <select id="getById" resultMap="htUserMap">
+        select * from ht_user
+        where user_id = #{id}
+        and del_status = 0
+    </select>
+
+    <update id="updateHtuserById">
+        update ht_user
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="elecCategory != null" >
+                elec_category = #{elecCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="userCategory != null" >
+                user_category = #{userCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="loadProperty != null" >
+                load_property = #{loadProperty,jdbcType=VARCHAR},
+            </if>
+            <if test="elecAddress != null" >
+                elec_address = #{elecAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="checkUser != null" >
+                check_user = #{checkUser,jdbcType=INTEGER},
+            </if>
+            <if test="checkCycle != null" >
+                check_cycle = #{checkCycle,jdbcType=INTEGER},
+            </if>
+            <if test="checkDateBefore != null" >
+                check_date_before = #{checkDateBefore,jdbcType=TIMESTAMP},
+            </if>
+            <if test="checkDateAfter != null" >
+                check_date_after = #{checkDateAfter,jdbcType=TIMESTAMP},
+            </if>
+            <if test="elecCode != null" >
+                elec_code = #{elecCode,jdbcType=VARCHAR},
+            </if>
+            <if test="collectCode != null" >
+                collect_code = #{collectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="assetsCode != null" >
+                assets_code = #{assetsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null" >
+                lat = #{lat},
+            </if>
+            <if test="lng != null" >
+                lng = #{lng},
+            </if>
+        </set>
+        WHERE user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+
+    <delete id="removeByHtuserId">
+        delete from ht_user
+        where user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>设备责任人表</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.username" @keyup.enter="query" placeholder="请输入姓名">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.mobile" @keyup.enter="query" placeholder="请输入手机号码">
+            </div>
+           <!-- <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.studioCamera" @keyup.enter="query" placeholder="请输入座机号码">
+            </div>-->
+            <#if shiro.hasPermission("sys:equipmentowner:list")>
+                <a class="btn btn-default" @click="query">查询</a>
+            </#if>
+
+			<#if shiro.hasPermission("sys:equipmentowner:save")>
+            <a class="btn btn-success" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>
+			<#if shiro.hasPermission("sys:equipmentowner:update")>
+            <a class="btn btn-warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:equipmentowner:delete")>
+            <a class="btn btn-danger" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">名字</div>
+                        <div class="col-sm-10">
+                            <input type="text" maxlength="30" class="mustInput form-control" v-model="equipmentOwner.username" placeholder="名字(最长30位)"/>
+                        </div>
+                    </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">密码</div>
+                <div class="col-sm-10">
+                    <input type="text" minlength="6" maxlength="12" class="mustInput form-control" v-model="equipmentOwner.password" placeholder="密码(最大12位)"/>
+                </div>
+            </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电话号码</div>
+                        <div class="col-sm-10">
+                            <input type="text" id="mobile" class="form-control" v-model="equipmentOwner.mobile" placeholder="电话号码"/>
+                        </div>
+                    </div>
+            <!--<div class="form-group">
+                <div class="col-sm-2 control-label">创建时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" v-model="equipmentOwner.createTime" placeholder="创建时间"/>
+                </div>
+            </div>-->
+<!--											                    <div class="form-group">-->
+<!--                        <div class="col-sm-2 control-label">创建时间</div>-->
+<!--                        <div class="col-sm-10">-->
+<!--                            <input type="text" class="form-control" v-model="equipmentOwner.createDate" placeholder="创建时间"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--											                    <div class="form-group">-->
+<!--                        <div class="col-sm-2 control-label">职位</div>-->
+<!--                        <div class="col-sm-10">-->
+<!--                            <input type="text" class="form-control" v-model="equipmentOwner.position" placeholder="职位"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/equipmentowner.js?_${.now?long}"></script>
+</body>
+</html>

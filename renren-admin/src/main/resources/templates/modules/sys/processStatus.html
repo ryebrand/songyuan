@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/shandong-admin/statics/css/bootstrap.css" rel="stylesheet">
+    <style>
+        table tbody {
+            display: block;
+            overflow-y: scroll;
+        }
+        table tbody::-webkit-scrollbar {
+            display: none;
+        }
+
+        table thead,
+        tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    </style>
+</head>
+<body>
+<div id="container_buttom" style="height: 50vh"></div>
+<div class="container-fluid">
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th colspan=6 style="text-align:center;vertical-align:middle">缺陷跟踪统计</th>
+        </tr>
+        <tr>
+            <th>供电所</th>
+            <th>台区</th>
+            <th>总数</th>
+            <th>待处理</th>
+            <th>处理中</th>
+            <th>处理完成</th>
+        </tr>
+        <tr>
+            <th colspan=2 style="text-align:center;vertical-align:middle">合计</th>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+</div>
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>-->
+<!--<script type="text/javascript"-->
+<!--        src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>-->
+<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>-->
+<script src="${request.contextPath}/statics/libs/echarts.min.js?_${.now?long}"></script>
+
+<script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+<script type="text/javascript"
+        src="/shandong-admin/statics/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/shandong-admin/statics/js/modules/sys/processingStatus.js"></script>
+</body>
+</html>

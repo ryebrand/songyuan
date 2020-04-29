@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.MeterDefectRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.MeterDefectRecordEntity" id="meterDefectRecordMap">
+        <result property="id" column="id"/>
+        <result property="meterBoxId" column="meter_box_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="defectId" column="defect_id"/>
+        <result property="createtime" column="createtime"/>
+    </resultMap>
+    <select id="getMeterDefectRecordById" resultType="map">
+        select t.defect_id,count(t.defect_id) as count from meter_defect_record t GROUP BY t.defect_id;
+    </select>
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.InspectionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.InspectionEntity" id="inspectionMap">
+        <result property="id" column="id"/>
+        <result property="meterBoxId" column="meter_box_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="userid"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <resultMap type="io.renren.entity.InspectionEntity" id="baseMap">
+        <result property="meterBoxId" column="meter_box_id"/>
+        <result property="malfunctionId" column="malfunction_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="getInspectionList" resultMap="baseMap">
+        select t.meter_box_id,t.malfunction_id,t.create_time,t.user_id from inspection t where t.user_id=#{userid} limit #{page},#{pageSize};
+    </select>
+
+
+    <select id="queryPageList" resultType="io.renren.dto.InspectionPageListDto">
+        SELECT
+        inspection.id,
+        inspection.ht_user_id,
+        inspection.malfunction_id,
+        inspection.user_id,
+        inspection.create_time,
+        malfunction.image,
+        malfunction.other_fault_description,
+        malfunction.fault_description,
+        malfunction.defect_level,
+        malfunction.type,
+        malfunction.processing_status,
+        tb_user.mobile,
+        tb_user.username,
+        ht_user.assets_code
+
+        FROM
+        inspection
+        LEFT JOIN malfunction ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN tb_user ON tb_user.user_id = inspection.user_id
+        LEFT JOIN ht_user ON ht_user.user_id = inspection.ht_user_id
+        WHERE
+        1 = 1
+        AND inspection.delete_status = 0
+        AND malfunction.delete_status = 0
+        <if test="userId!=null">
+            AND inspection.user_id = #{userId}
+        </if>
+        <if test="meterBoxId!=null">
+            AND inspection.ht_user_id =#{meterBoxId}
+        </if>
+        ORDER BY inspection.create_time DESC
+    </select>
+
+
+<!--    <select id="selectByUserId" resultType="io.renren.dto.RecentInspeBoxDto">-->
+<!--        SELECT-->
+<!--            ins.id,-->
+<!--            ins.meter_box_id,-->
+<!--            ins.malfunction_id,-->
+<!--            ins.user_id,-->
+<!--            ins.create_time,-->
+<!--            ins.delete_status,-->
+<!--            meter_box.meter_box_asset_number,-->
+<!--            meter_box.tai_area_name,-->
+<!--            meter_box.tai_area_total_asset_number,-->
+<!--            meter_box.total_energy_meter_seal,-->
+<!--            meter_box.power_supply,-->
+<!--            meter_box.meter_box_model,-->
+<!--            meter_box.address,-->
+<!--            meter_box.magnification,-->
+<!--            meter_box.meter_box_number,-->
+<!--            meter_box.meter_box_address,-->
+<!--            meter_box.acquisition_terminal_asset_number,-->
+<!--            meter_box.meter_box_status,-->
+<!--            equipment_owner.`name`,-->
+<!--            equipment_owner.phone_number-->
+<!--        FROM-->
+<!--            ( SELECT * FROM inspection WHERE 1 = 1 AND inspection.user_id = #{userId} ORDER BY inspection.create_time DESC  LIMIT 1000 ) AS ins-->
+<!--            LEFT JOIN meter_box ON ins.meter_box_id = meter_box.id-->
+<!--            LEFT JOIN equipment_owner ON meter_box.equipment_owner_id = equipment_owner.id-->
+<!--        WHERE-->
+<!--            1 = 1-->
+<!--        GROUP BY-->
+<!--            meter_box_id-->
+<!--        ORDER BY-->
+<!--            create_time DESC-->
+<!--    </select>-->
+    
+    
+
+
+
+
+</mapper>

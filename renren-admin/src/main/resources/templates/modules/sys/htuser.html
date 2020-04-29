@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+    <style>
+        .ui-jqgrid tr.jqgrow td:last-child {
+            text-align: left !important;
+        }
+    </style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.htUserId" @keyup.enter="query" placeholder="请输入用户编号">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.address" @keyup.enter="query" placeholder="请输入用电地址">
+            </div>
+
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.checkUserName" @keyup.enter="query" placeholder="请输入检察人员">
+            </div>
+
+            <a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+
+			<!--<#if shiro.hasPermission("sys:htuser:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			</#if>-->
+			<#if shiro.hasPermission("sys:htuser:update")>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			</#if>
+			<#if shiro.hasPermission("sys:htuser:delete")>
+            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			</#if>
+
+            <#if shiro.hasPermission("sys:watchbox:upload")>
+            <a class="btn btn-success"  href="${request.contextPath}/statics/file/导入模板.xlsx"><i
+                    class="fa fa-download"
+                    aria-hidden="true"></i>下载模板</a>
+            <a class="btn btn btn-success" ><i class="fa fa-upload" id="importtable">&nbsp;导入数据</i></a>
+            </#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="addOrUpdate" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+                <div class="form-group" v-show="showNameAdd">
+                    <div class="col-sm-2 control-label">用户编号</div>
+                    <div class="col-sm-10">
+                        <input type="text" minlength="10" size="10" class="form-control" v-model="htUser.userId" placeholder="10位用户编号"/>
+                    </div>
+                </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名称</div>
+                        <div class="col-sm-10">
+                            <input name="userName" maxlength="30" type="text" class="form-control" v-model="htUser.userName" placeholder="用户名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用电类别</div>
+                        <div class="col-sm-10">
+                            <input name="elecCategory" maxlength="30" type="text" class="form-control" v-model="htUser.elecCategory" placeholder="用电类别"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户分类</div>
+                        <div class="col-sm-10">
+                            <input name="userCategory" maxlength="30" type="text" class="form-control" v-model="htUser.userCategory" placeholder="用户分类"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">负荷性质</div>
+                        <div class="col-sm-10">
+                            <input name="loadProperty" maxlength="30" type="text" class="form-control" v-model="htUser.loadProperty" placeholder="负荷性质"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用电地址信息</div>
+                        <div class="col-sm-10">
+                            <input maxlength="50" name="elecAddress" type="text" class="form-control" v-model="htUser.elecAddress" placeholder="用电地址信息"/>
+                        </div>
+                    </div>
+
+					<div class="form-group">
+                        <div class="col-sm-2 control-label">责任人</div>
+                        <div class="col-sm-10">
+                            <select name="checkUserName" class="form-control" id="ownerNameSelect"></select>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">检查周期</div>
+                        <div class="col-sm-10">
+<!--                            <input type="text" class="form-control" v-model="htUser.checkCycle" placeholder="检查周期"/>-->
+                            <select id="checkCycleSelect" class="form-control">
+                                <option value="3" selected="selected">3</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                                <option value="36">36</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--<div class="form-group col-xs-2">
+                        <input type="text" class="form-control" id="createTime" v-model="q.createTime" @keyup.enter="query" placeholder="请选择上报时间范围">
+                    </div>-->
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">上次检查日期</div>
+                        <div class="col-sm-10">
+                            <!--<input type="text" class="form-control" v-model="htUser.checkDateBefore" placeholder="上次检查日期"/>-->
+                            <input name="checkDateBefore" type="text" class="form-control" id="checkDateBefore" v-model="htUser.checkDateBefore" @keyup.enter="query" placeholder="请选择上次检查日期">
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">电能表条码</div>
+                        <div class="col-sm-10">
+                            <input maxlength="30" type="text" class="form-control" v-model="htUser.elecCode" placeholder="电能表条码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">采集点编号</div>
+                        <div class="col-sm-10">
+                            <input maxlength="30" name="collectCode" type="text" class="form-control" v-model="htUser.collectCode" placeholder="采集点编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">终端资产编号</div>
+                        <div class="col-sm-10">
+                            <input maxlength="30" name="assetsCode" type="text" class="form-control" v-model="htUser.assetsCode" placeholder="终端资产编号"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+
+    <div id="changeOwnerShow" style="display: none;">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" id="oQUserName" class="form-control" v-model="oq.username" @keyup.enter="oQuery" placeholder="请输入用户名">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" id="oQMobile" class="form-control" v-model="oq.mobile" @keyup.enter="oQuery" placeholder="请输入手机号">
+            </div>
+
+            <!--<div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="oq.studioCamera" @keyup.enter="oQuery" placeholder="请输入座机号">
+            </div>-->
+            <a class="btn btn-primary"  @click="oQuery"><i class="fa fa-search"></i>&nbsp;查询</a>
+            <a class="btn btn-success"  @click="changeOwner"><i class="fa fa-search"></i>&nbsp;更改责任人</a>
+        </div>
+        <table id="ownerjqGrid"></table>
+        <div id="ownerjqGridPager"></div>
+    </div>
+
+
+    <div v-show="details" class="panel panel-default">
+        <a class="btn btn-warning" @click="reload"><i class="fa fa-arrow-left"></i>&nbsp;返回</a>
+        <div class="panel-heading">高压用户详情</div>
+        <div class="row">
+            <div class="col-sm-5"><h4>用户名称:<strong v-html="htUserDet.userName">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>用电类别 :<strong v-html="htUserDet.elecCategory">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>用户分类 :<strong v-html="htUserDet.userCategory">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>负荷性质 :<strong v-html="htUserDet.loadProperty">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>用电地址信息 :<strong v-html="htUserDet.elecAddress">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>责任人 :<strong v-html="htUserDet.checkUserName">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>检查周期 :<strong v-html="htUserDet.checkCycle">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>上次检查日期 :<strong v-html="htUserDet.checkDateBefore">加载中</strong ></h4></div>
+            <div class="col-sm-5"><h4>下次检查日期 :<strong v-html="htUserDet.checkDateAfter">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>电能表条码 :<strong v-html="htUserDet.elecCode">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>采集点编号 :<strong v-html="htUserDet.collectCode">加载中</strong></h4></div>
+            <div class="col-sm-5"><h4>终端资产编号 :<strong v-html="htUserDet.assetsCode">加载中</strong></h4></div>
+<!--            <div class="col-sm-5"><h4>集中器资产号 :<strong v-html="htUserDet.concentratorAssetNumber">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>计量箱地址 :<strong v-html="htUserDet.meterBoxAddress">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>采集终端资产号 :<strong v-html="htUserDet.acquisitionTerminalAssetNumber">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>集中器封印 :<strong v-html="htUserDet.concentratorSeal">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>计量箱状态 :<strong v-html="htUserDet.meterBoxStatus">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>设备责任人 :<strong v-html="htUserDet.name">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>设备责任人手机 :<strong v-html="htUserDet.phoneNumber">加载中</strong></h4></div>-->
+<!--            <div class="col-sm-5"><h4>设备责任人工作电话 :<strong v-html="htUserDet.studioCamera">加载中</strong></h4></div>-->
+        </div>
+    
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/libs/ajaxupload.js"></script>
+<script src="${request.contextPath}/statics/plugins/layui\lay/modules/laydate/laydate.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/htuser.js?_${.now?long}"></script>
+</body>
+</html>

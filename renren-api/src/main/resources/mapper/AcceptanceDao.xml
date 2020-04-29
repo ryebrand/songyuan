@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.AcceptanceDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+
+    <resultMap type="io.renren.entity.AcceptanceEntity" id="acceptanceMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="assetNumber" column="asset_number"/>
+        <result property="acceptanceType" column="acceptance_type"/>
+        <result property="defectDescription" column="defect_description"/>
+        <result property="buildDate" column="build_date"/>
+        <result property="completionDate" column="completion_date"/>
+        <result property="step" column="step"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+
+    <select id="selectByUserId" resultType="io.renren.dto.AcceptanceBoxListDto">
+        SELECT
+        meter_box.id,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.tai_area_total_asset_number,
+        meter_box.total_energy_meter_seal,
+        meter_box.power_supply,
+        meter_box.meter_box_model,
+        meter_box.address,
+        meter_box.magnification,
+        meter_box.meter_box_number,
+        meter_box.meter_box_address,
+        meter_box.acquisition_terminal_asset_number,
+        meter_box.concentrator_seal,
+        meter_box.meter_box_status,
+        meter_box.equipment_owner_id,
+        acceptance.type,
+        acceptance.asset_number,
+        acceptance.acceptance_type,
+        acceptance.defect_description,
+        acceptance.build_date,
+        acceptance.region_id,
+        acceptance.completion_date,
+        acceptance.malfunction_id,
+        acceptance.step,
+        equipment_owner.`name`
+        FROM
+        acceptance
+        LEFT JOIN region ON acceptance.region_id = region.id
+        LEFT JOIN meter_box ON acceptance.asset_number = meter_box.meter_box_asset_number
+        LEFT JOIN equipment_owner ON equipment_owner.id = meter_box.equipment_owner_id
+        -- LEFT JOIN tb_user ON region.user_id = tb_user.user_id
+        WHERE
+        1 = 1
+        AND acceptance.delete_status = 0
+        AND meter_box.delete_status = 0
+        AND region.user_id = #{userId}
+        <if test="acceptanceType!=null and acceptanceType!=''">
+            AND acceptance.acceptance_type IN(#{acceptanceType})
+        </if>
+        <if test="step!=null and step!=''">
+            AND acceptance.step IN (#{step})
+        </if>
+    </select>
+
+
+    <select id="selectByAssetNumber" resultType="io.renren.dto.AcceptanceDto">
+            SELECT
+        acceptance.type,
+        acceptance.asset_number,
+        acceptance.acceptance_type,
+        acceptance.defect_description,
+        acceptance.build_date,
+        acceptance.completion_date,
+        acceptance.malfunction_id,
+        acceptance.step,
+        acceptance.delete_status,
+        meter_box.id,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.tai_area_total_asset_number,
+        meter_box.total_energy_meter_seal,
+        meter_box.power_supply,
+        meter_box.meter_box_model,
+        meter_box.address,
+        meter_box.magnification,
+        meter_box.meter_box_number,
+        meter_box.meter_box_address,
+        meter_box.concentrator_seal,
+        meter_box.acquisition_terminal_asset_number,
+        meter_box.meter_box_status,
+        equipment_owner.`name`
+        FROM
+        acceptance
+        LEFT JOIN meter_box ON acceptance.asset_number = meter_box.meter_box_asset_number
+        LEFT JOIN region ON acceptance.region_id = region.id
+        LEFT JOIN equipment_owner ON equipment_owner.id = meter_box.equipment_owner_id
+        WHERE
+        1 = 1
+        AND acceptance.delete_status = 0
+        AND meter_box.delete_status = 0
+        AND acceptance.asset_number ='${meterBoxAssetNumber}'
+        AND region.user_id = #{userId}
+        LIMIT 1
+    </select>
+
+</mapper>

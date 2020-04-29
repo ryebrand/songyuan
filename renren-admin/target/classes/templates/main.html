@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>欢迎页</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+    <script src="${request.contextPath}/statics/plugins/layer/layer.js"></script>
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.min.css">
+    <script src="${request.contextPath}/statics/libs/echarts.min.js"></script>
+    <style>
+        .piece {
+            width: 15vw;
+            height: 15vh;
+            float: left;
+            margin: 0px 0px 0px 120px;
+        }
+
+        .piece > img {
+            width: 28%;
+            height: 60%;
+            margin: 5% 10%;
+            float: left;
+        }
+
+        .graph {
+            width: 94vw;
+            height: 40vh;
+            float: left;
+            background-color: #FFFFFF;
+            margin: 0px 20px 0px 35px;
+        }
+
+        .pie {
+            width: 46vw;
+            height: 40vh;
+            float: left;
+            background-color: #FFFFFF;
+            margin: 25px 10px 10px 30px;
+        }
+
+        .data {
+            width: 100%;
+            height: 30%;
+            font-size: 3rem;
+            color: white;
+            font-family: 微软雅黑;
+            float: left;
+            margin-top: 15%;
+        }
+
+        .unit {
+            width: 100%;
+            height: 50%;
+            margin: 10% 0% 0% 0%;
+            float: left;
+            font-size: 1.6rem;
+            /* padding: 30px 0px 0px 10px; */
+            color: white;
+            font-family: 微软雅黑;
+        }
+
+        .left {
+            width: 46vw;
+            height: 100%;
+            float: left;
+            margin-right: 50px;
+        }
+
+        .right {
+            width: 43vw;
+            height: 100%;
+            float: left;
+        }
+
+        .title {
+            font-family: 微软雅黑;
+            font-size: 2rem;
+        }
+
+    </style>
+
+
+<body style="background-color: #F7F7F7">
+<audio id="audio">
+    <source src="statics/file/prompt.mp3" type="audio/mpeg"/>
+    你的浏览器不支持音频文件.
+</audio>
+<div class="piece" style=' background: url("statics/img/tbule.png") no-repeat; background-size: 100%;'>
+    <img src="statics/img/img1.png" height="97" width="117"/>
+    <div style="width: 50%;height: 100%;float: left;">
+        <div class="data" id="box">
+            加载中 ...
+        </div>
+        <div class="unit">
+            表箱总数
+        </div>
+    </div>
+</div>
+
+<div class="piece" style=' background: url("statics/img/blue.png") no-repeat;background-size: 100%;'>
+    <img src="statics/img/img2.png" height="97" width="117"/>
+    <div style="width: 50%;height: 100%;float: left;">
+        <div class="data" id="run">
+            加载中 ...
+        </div>
+        <div class="unit">
+            正常运行
+        </div>
+    </div>
+</div>
+
+<div class="piece" style=' background: url("statics/img/red.png") no-repeat;background-size: 100%;'>
+    <img src="statics/img/img3.png" height="97" width="117"/>
+    <div style="width: 50%;height: 100%;float: left;">
+        <div class="data" id="fault">
+            加载中 ...
+        </div>
+        <div class="unit">
+            故障总数
+        </div>
+    </div>
+</div>
+
+<div class="piece" style=' background: url("statics/img/purple.png") no-repeat;background-size: 100%;'>
+    <img src="statics/img/img4.png" height="97" width="117"/>
+    <div style="width: 50%;height: 100%;float: left;">
+        <div class="data" id="ins">
+            加载中 ...
+        </div>
+        <div class="unit">
+            本月巡检次数
+        </div>
+    </div>
+</div>
+
+
+<div class="pie" id="pie">
+    饼图
+</div>
+
+<div class="pie" id="histogram">
+    柱状图
+</div>
+
+
+<div class="graph">
+    <div class="left" id="left">
+
+    </div>
+    <div class="right">
+        <div class="title" style="font-weight: bold;font-size: 18px;margin-top:2vm;">巡检小助手</div>
+        <br>
+        <table width="100%">
+            <colgroup>
+                <col width="30%"/>
+                <col width="50%"/>
+                <col width="20%"/>
+            </colgroup>
+            <tr>
+                <td> 最后巡检时间 </td>
+                <td> 用户名称 </td>
+                <td> 缺陷等级 </td>
+            </tr>
+        </table>
+
+        <div  style="height:180px;width:100%;overflow:auto">
+
+        <table class="table table-hover" id="mTable" width="100%">
+           <!-- <thead>
+            <tr>
+                <th>最后巡检时间</th>
+&lt;!&ndash;                <th>台区名称</th>&ndash;&gt;
+                <th>用电地址</th>
+                <th>缺陷等级</th>
+            </tr>
+            </thead>-->
+            <colgroup>
+                <col width="30%"/>
+                <col width="50%"/>
+                <col width="20%"/>
+            </colgroup>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    var tableData = [];
+
+
+    $(function () {
+        $.get("sys/meterbox/main", function (r) {
+            console.log(r);
+            $("#box").text(r.data.meterBoxCount);
+            $("#run").text(r.data.runCount);
+            $("#fault").text(r.data.malfunctionCount);
+            $("#ins").text(r.data.nowMonthCount);
+            tableData = r.data.topSix;
+            pushTable(tableData.reverse());
+            // console.log(r.data.topSix);
+
+            var tatalObj = r.data.malfunctionTotal;
+            var total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var handeled = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            for (var i = 0; i < 12; i++) {
+                $.each(tatalObj, function (index, dom) {
+                    if ((i + 1) === dom.mont) {
+                        total[i] = dom.count
+                    }
+                })
+            }
+            var handeledObj = r.data.handelTotal;
+
+            for (var j = 0; j < 12; j++) {
+                $.each(handeledObj, function (index, dom) {
+                    if ((j + 1) === dom.mont) {
+                        handeled[j] = dom.count
+                    }
+                })
+            }
+            // console.log(total)
+            // console.log(handeled)
+            var left = echarts.init(document.getElementById('left'));
+            var option = {
+                title: {
+                    text: '故障统计'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['故障总数', '已处理故障数']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        // saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                color: ['#ff6699', '#2292DD', '#DDDD22', '#FF9900'],
+                series: [
+                    {
+                        name: '故障总数',
+                        type: 'line',
+                        data: total
+                    },
+                    {
+                        name: '已处理故障数',
+                        type: 'line',
+                        // itemStyle: {
+                        //     normal: {
+                        //         lineStyle: {
+                        //             color: '#1A94E6'
+                        //         }
+                        //     }
+                        // },
+                        data: handeled
+                    }
+                ]
+            };
+            left.setOption(option);
+
+            var dt = r.data.dateArray.reverse();
+            var createTime = r.data.createTime;
+            console.log(dt);
+            var dataDt = [0, 0, 0, 0, 0, 0, 0];
+            for (var f = 0; f < dataDt.length; f++) {
+                $.each(createTime, function (index, dom) {
+                    if (dt[f] === dom.days) {
+                        dataDt[f] = dom.num;
+                    }
+                })
+            }
+            var histogram = echarts.init(document.getElementById('histogram'));
+            var histogramOption = {
+                title: {
+                    text: "近7天巡检次数",
+                    x: '300px',
+                    y: '20px',
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dt
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    data: dataDt,
+                    type: 'bar',
+                    barWidth: 25,//柱图宽度
+                    barGap: '-20%',//柱图间距
+                    itemStyle: {
+                        //通常情况下：
+                        normal: {
+                            //每个柱子的颜色即为colorList数组里的每一项，如果柱子数目多于colorList的长度，则柱子颜色循环使用该数组中的颜色
+                            color: function (params) {
+                                var colorList = [
+                                    '#0099FF', '#FF6600', '#A25EA2', '#6600FF', '#00FFFF',
+                                    '#5EA279', '#3FAF98', '#00EE30'
+                                ];
+                                return colorList[params.dataIndex];
+                            },
+                            // color: '#70C0F5',  //设置所有柱状图颜色
+                        },
+                        // //鼠标悬停时：
+                        // emphasis: {
+                        //     shadowBlur: 10,
+                        //     shadowOffsetX: 0,
+                        //     shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        // }
+                    }
+                }]
+            };
+            histogram.setOption(histogramOption);
+
+
+            var level = r.data.defectLevel;
+            var levelData = [0, 0, 0, 0];
+            for (var i = 0; i < levelData.length; i++) {
+                $.each(level, function (index, dom) {
+                    if (i + 1 === dom.defectLevel) {
+                        levelData[i] = dom.count;
+                    }
+                });
+            }
+            var pie = echarts.init(document.getElementById('pie'));
+            var pieOption = {
+                title: {
+                    text: "根据缺陷等级统计",
+                    x: '300px',
+                    y: '10px',
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data: ['危急缺陷', '严重缺陷', '一般缺陷（轻度）', '一般缺陷（轻微）']
+                },
+                series: [
+                    {
+                        name: '故障统计',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        color: ['#ff6699', '#2292DD', '#DDDD22', '#FF9900'],
+                        data: [
+                            {value: levelData[0], name: '危急缺陷'},
+                            {value: levelData[1], name: '严重缺陷'},
+                            {value: levelData[2], name: '一般缺陷（轻度）'},
+                            {value: levelData[3], name: '一般缺陷（轻微）'}
+                        ]
+                    }
+                ]
+            };
+            pie.setOption(pieOption);
+
+
+        })
+
+        $.get("sys/config/infoBykey/websocket", function (r) {
+            if (r.code === 0) {
+                setTimeout(function () {
+                    openWebsocket(r.config.paramValue);
+                }, 2000);
+            }
+        });
+
+        // websocket
+
+        var websocket = null;
+
+        function openWebsocket(path) {
+            return;
+            //判断当前浏览器是否支持WebSocket
+            if ('WebSocket' in window) {
+                var url = "ws://" + path + "/shandong-api/socket";
+                websocket = new WebSocket(url);
+            } else {
+                alert('Not support websocket')
+            }
+            //连接发生错误的回调方法
+            websocket.onerror = function () {
+                console.log("websocket发生错误");
+            };
+
+            //连接成功建立的回调方法
+            websocket.onopen = function (event) {
+                console.log("连接成功！")
+            }
+
+            //接收到消息的回调方法
+            websocket.onmessage = function (event) {
+                // console.log(event.data);
+                var data = JSON.parse(event.data);
+                // console.log(data.data);
+                if (data.data === undefined) {
+                    console.log("无数据")
+                } else {
+                    tableData.pop();
+                    data.data.createTime = timestampToTime(data.data.createTime);
+                    // console.log(data.data);
+                    tableData.push(data.data);
+                    pushTable(tableData);
+
+                    announcement();
+                    playMusic();
+                }
+            }
+
+
+            //连接关闭的回调方法
+            websocket.onclose = function () {
+                console.log("关闭连接")
+            }
+            //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+            window.onbeforeunload = function () {
+                websocket.close();
+            }
+        }
+
+
+        // //关闭连接
+        // function closeWebSocket() {
+        //     websocket.close();
+        // }
+
+        //发送消息
+        function send() {
+            websocket.send(message);
+        }
+
+        function playMusic() {
+            var audioEle = document.getElementById("audio");
+            audioEle.load();
+            if (audioEle.paused) { /*如果已经暂停*/
+                audioEle.play();   //播放
+            } else {
+                audioEle.pause();  //暂停
+            }
+        }
+
+
+        function announcement() {
+            layer.open({
+                type: 1
+                ,
+                title: false //不显示标题栏
+                ,
+                closeBtn: false
+                ,
+                area: ['350px', '200px']
+                ,
+                shade: 0
+                ,
+                id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                ,
+                resize: false
+                ,
+                btn: ['确定']
+                ,
+                btnAlign: 'c'
+                ,
+                moveType: 1 //拖拽模式，0或者1
+                ,
+                time: 5000
+                ,
+                content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">有新故障上报，请注意查看！</div>'
+                ,
+                offset: 'rb'
+                ,
+                yes: function (index, layero) {
+                    layer.closeAll();
+                }
+            });
+
+        }
+    })
+
+    function pushTable(data) {
+        $("#mTable>tbody").empty();
+        $.each(data, function (index, dom) {
+            switch (dom.defectLevel) {
+                case 0:
+                    $("#mTable>tbody").prepend('<tr >\n' +
+                        '                <td>' + dom.checkDateBefore + '</td>\n' +
+                        // '                <td>' + dom.taiAreaName + '</td>\n' +
+                        '                <td>' + dom.userName + '</td>\n' +
+                        '                <td><button type="button" class="btn btn-default btn-xs">无缺陷</button></td>\n' +
+                        '            </tr>')
+                    break;
+                case 1:
+                    $("#mTable tbody").prepend('<tr >\n' +
+                        '                <td>' + dom.checkDateBefore + '</td>\n' +
+                        // '                <td>' + dom.taiAreaName + '</td>\n' +
+                        '                <td>' + dom.userName + '</td>\n' +
+                        '                <td><button type="button" class="btn btn-danger btn-xs">危急缺陷</button></td>\n' +
+                        '            </tr>')
+                    break;
+                case 2:
+                    $("#mTable>tbody").prepend('<tr>\n' +
+                        '                <td>' + dom.checkDateBefore + '</td>\n' +
+                        // '                <td>' + dom.taiAreaName + '</td>\n' +
+                        '                <td>' + dom.userName + '</td>\n' +
+                        '                <td><button type="button" class="btn btn-warning btn-xs">严重缺陷</button></td>\n' +
+                        '            </tr>')
+                    break;
+                case 3:
+                    $("#mTable>tbody").prepend('<tr >\n' +
+                        '                <td>' + dom.checkDateBefore + '</td>\n' +
+                        // '                <td>' + dom.taiAreaName + '</td>\n' +
+                        '                <td>' + dom.userName + '</td>\n' +
+                        '                <td><button type="button" class="btn btn-info btn-xs">一般缺陷(轻度)</button></td>\n' +
+                        '            </tr>')
+                    break;
+                case 4:
+                    $("#mTable>tbody").prepend('<tr >\n' +
+                        '                <td>' + dom.checkDateBefore + '</td>\n' +
+                        // '                <td>' + dom.taiAreaName + '</td>\n' +
+                        '                <td>' + dom.userName + '</td>\n' +
+                        '                <td><button type="button" class="btn btn-primary btn-xs">一般缺陷(轻微)</button></td>\n' +
+                        '            </tr>')
+                    break;
+            }
+        })
+    }
+
+    /**
+     * 时间戳转时间
+     * @param timestamp
+     * @returns {string}
+     */
+    function timestampToTime(timestamp) {
+        const dateObj = new Date(+timestamp) // ps, 必须是数字类型，不能是字符串, +运算符把字符串转化为数字，更兼容
+        const year = dateObj.getFullYear() // 获取年，
+        const month = dateObj.getMonth() + 1 // 获取月，必须要加1，因为月份是从0开始计算的
+        const date = dateObj.getDate() // 获取日，记得区分getDay()方法是获取星期几的。
+        const hours = pad(dateObj.getHours())  // 获取时, pad函数用来补0
+        const minutes = pad(dateObj.getMinutes()) // 获取分
+        const seconds = pad(dateObj.getSeconds()) // 获取秒
+        return year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds
+    }
+
+    function pad(str) {
+        return +str >= 10 ? str : '0' + str
+    }
+</script>
+</body>
+</html>

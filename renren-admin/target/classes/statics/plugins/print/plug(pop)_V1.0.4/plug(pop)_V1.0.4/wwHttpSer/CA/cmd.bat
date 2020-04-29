@@ -1,0 +1,1 @@
+certmgr.exe /c /add ca-cert.pem /s root

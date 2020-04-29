@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>缺陷表</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" id="createTime" v-model="q.createTime" @keyup.enter="query" placeholder="请选择上报时间范围">
+            </div>
+            <!--<label >
+                故障类型：
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"  name="type" value="0" v-model="type"> 巡检故障
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="type" value="1" v-model="type">验收故障
+            </label>-->
+            &nbsp;
+            &nbsp;
+            &nbsp;
+            <label >
+                缺陷级别：
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="level" value="0" v-model="level">
+                无缺陷
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="level" value="1" v-model="level">
+                危急缺陷
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="level" value="2" v-model="level">
+                严重缺陷
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="level" value="3" v-model="level">
+                一般缺陷（轻度）
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="level" value="4" v-model="level">
+                一般缺陷（轻微）
+            </label>
+            &nbsp;
+            &nbsp;
+            &nbsp;<br>
+            <label >
+                处理状态：
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="status" value="0" v-model="status">
+                待处理
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="status" value="1" v-model="status">
+                处理待确认
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"   name="status" value="2" v-model="status">
+                处理完成
+            </label>
+            &nbsp;
+            &nbsp;
+            &nbsp;
+
+            <a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+
+        <div class="panel-heading">缺陷记录详情</div>
+        <form class="form-horizontal" style="margin: 20px 20px 20px 20px;width: 90%; padding: 10px 10px 10px 10px">
+            <div class="form-group">
+                <label  >高压用户编号：</label>
+                <span  v-html="details.htUserId"></span>
+            </div>
+            <!--<div class="form-group">
+                <label  >台区名称：</label>
+                <span  v-html="details.taiAreaName"></span>
+            </div>-->
+            <div class="form-group">
+                <label  >地址：</label>
+                <span  v-html="details.elecAddress"></span>
+            </div>
+            <!--<div class="form-group">
+                <label  >计量箱运行状态：</label>
+                <span  v-html="details.meterBoxStatus"></span>
+            </div>-->
+            <div class="form-group">
+                <label  >故障类型：</label>
+                <span   v-if="details.type===0">巡检故障</span>
+                <span   v-if="details.type===1">验收故障</span>
+            </div>
+            <div class="form-group">
+                <label  >故障上报时间：</label>
+                <span  v-html="details.createTime"></span>
+            </div>
+            <div class="form-group">
+                <label  >缺陷级别：</label>
+                <span  v-html="details.defectLevel"></span>
+            </div>
+            <div class="form-group">
+                <label  >故障描述：</label>
+                <span  v-if="details.faultDescription==='↵'">无</span>
+                <span v-else  v-html="details.faultDescription"></span>
+            </div>
+            <div class="form-group">
+                <label  >其它故障描述：</label>
+                <span  v-if="details.otherFaultDescription===null">无</span>
+                <span v-else  v-html="details.otherFaultDescription"></span>
+            </div>
+            <div class="form-group">
+                <label  >现场拍摄照片：</label>
+                <span  v-html="details.image"></span>
+            </div>
+            <div class="form-group">
+                <label  >验收照片：</label>
+                <span  v-html="details.acceptImage"></span>
+            </div>
+            <div class="form-group">
+                <label  >故障处理进度：</label>
+                <span  v-html="details.processingStatus"></span>
+            </div>
+            <!--<div class="form-group">
+                <label  >设备责任人：</label>
+                <span  v-html="details.name"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人电话：</label>
+                <span  v-html="details.phoneNumber"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人座机：</label>
+                <span  v-if="details.studioCamera===null">无</span>
+                <span  v-else v-html="details.studioCamera"></span>
+            </div>-->
+            <div class="col-sm-2 control-label"></div>
+            <div class="form-group">
+                <a class="btn btn-warning" @click="reload"><i class="fa fa-arrow-left"></i>&nbsp;返回</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="${request.contextPath}/statics/plugins/layui\lay/modules/laydate/laydate.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/malfunction.js?_${.now?long}"></script>
+</body>
+</html>

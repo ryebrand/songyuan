@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.MalfunctionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.MalfunctionEntity" id="malfunctionMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="defectLevel" column="defect_level"/>
+        <result property="faultDescription" column="fault_description"/>
+        <result property="processingStatus" column="processing_status"/>
+        <result property="otherFaultDescription" column="other_fault_description"/>
+        <result property="image" column="image"/>
+        <result property="createTime" column="create_time"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+    <select id="getDefectLevelById" parameterType="long" resultMap="malfunctionMap">
+        select t.type,t.defect_level,t.fault_description,t.other_fault_description,t.image,t.processing_status from malfunction t where t.id=#{id} order by t.create_time limit 1;
+    </select>
+
+    <select id="pageList" resultType="io.renren.dto.MalfunctionDto">
+
+        SELECT
+        malfunction.id,
+        malfunction.type,
+        malfunction.defect_level,
+        malfunction.fault_description,
+        malfunction.other_fault_description,
+        malfunction.image,
+        malfunction.processing_status,
+        malfunction.create_time,
+        ht_user.user_id as ht_user_id,
+        ht_user.user_name,
+        ht_user.elec_address,
+        ht_user.assets_code,
+
+        tb_user.username as check_user_name,
+        tb_user.mobile
+        FROM
+        malfunction
+        LEFT JOIN inspection ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN acceptance ON acceptance.malfunction_id = malfunction.id
+        LEFT JOIN ht_user ON inspection.ht_user_id = ht_user.user_id
+        OR acceptance.asset_number = ht_user.user_id
+        LEFT JOIN tb_user ON tb_user.user_id = inspection.user_id
+        <where>
+            <if test="defectLevel!= null">
+                AND malfunction.defect_level in (${defectLevel})
+            </if>
+            <if test="processingStatus!=null">
+                AND malfunction.processing_status in (#{processingStatus})
+            </if>
+            <if test="userId!=1">
+                AND tb_user.user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY malfunction.create_time DESC
+
+        <!--SELECT
+        malfunction.id,
+        malfunction.type,
+        malfunction.defect_level,
+        malfunction.fault_description,
+        malfunction.other_fault_description,
+        malfunction.image,
+        malfunction.processing_status,
+        malfunction.create_time,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.address,
+        meter_box.meter_box_status,
+        meter_box.power_supply,
+        equipment_owner.`name`
+        FROM
+        malfunction
+        LEFT JOIN inspection ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN acceptance ON acceptance.malfunction_id = malfunction.id
+        LEFT JOIN meter_box ON meter_box.id = inspection.meter_box_id OR acceptance.asset_number = meter_box.meter_box_asset_number
+        LEFT JOIN equipment_owner ON equipment_owner.id = meter_box.equipment_owner_id
+        LEFT JOIN region ON region.id = acceptance.region_id
+        <where>
+            <if test="defectLevel!=null and defectLevel!='' ">
+                malfunction.defect_level IN (${defectLevel})
+            </if>
+            <if test="processingStatus!=null  and processingStatus!=''">
+                AND malfunction.processing_status IN (${processingStatus})
+            </if>
+            <if test="userId!=null">
+                AND ( inspection.user_id = #{userId} OR acceptance.user_id = #{userId} )
+            </if>
+        </where>-->
+    </select>
+
+
+    <select id="selectByMalfunctionId" resultType="io.renren.dto.FaultReminderDto">
+        SELECT
+        malfunction.id,
+        malfunction.defect_level,
+        malfunction.create_time,
+
+        ht_user.elec_address
+--         meter_box.tai_area_name,
+--         meter_box.address
+        FROM
+        malfunction
+        LEFT JOIN acceptance ON malfunction.id = acceptance.malfunction_id
+        LEFT JOIN inspection ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN ht_user ON ( ht_user.user_id = inspection.ht_user_id OR ht_user.assets_code =
+        acceptance.asset_number )
+        <where>
+            <if test="id!=null">
+                malfunction.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDetailById" resultType="io.renren.dto.MalfunctionDto">
+        SELECT
+        malfunction.id,
+        malfunction.type,
+        malfunction.defect_level,
+        malfunction.fault_description,
+        malfunction.other_fault_description,
+        malfunction.image,
+        malfunction.accept_image,
+        malfunction.processing_status,
+        malfunction.create_time,
+
+        ht_user.user_id as ht_user_id,
+        ht_user.elec_address,
+
+        tb_user.username as check_user_name,
+        tb_user.mobile
+        FROM
+        malfunction
+        LEFT JOIN inspection ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN acceptance ON acceptance.malfunction_id = malfunction.id
+        LEFT JOIN ht_user ON inspection.ht_user_id = ht_user.user_id
+        OR acceptance.asset_number = ht_user.user_id
+        LEFT JOIN tb_user ON tb_user.user_id = inspection.user_id
+        <where>
+            <if test="id!=null">
+                malfunction.id=#{id}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="getDetailByhtUserId" resultType="io.renren.dto.MalfunctionDto">
+
+        SELECT
+        malfunction.id,
+        malfunction.type,
+        malfunction.defect_level,
+        malfunction.fault_description,
+        malfunction.other_fault_description,
+        malfunction.image,
+        malfunction.accept_image,
+        malfunction.processing_status,
+        malfunction.create_time,
+
+        ht_user.user_id as ht_user_id,
+        ht_user.elec_address,
+
+        tb_user.username as check_user_name,
+        tb_user.mobile
+        FROM
+        malfunction
+        LEFT JOIN inspection ON inspection.malfunction_id = malfunction.id
+        LEFT JOIN acceptance ON acceptance.malfunction_id = malfunction.id
+        LEFT JOIN ht_user ON inspection.ht_user_id = ht_user.user_id
+        OR acceptance.asset_number = ht_user.user_id
+        LEFT JOIN tb_user ON tb_user.user_id = inspection.user_id
+        <where>
+            <if test="htUserId!=null">
+                ht_user.user_id = #{htUserId}
+            </if>
+        </where>
+        order by malfunction.create_time desc
+        limit 1
+    </select>
+
+    <select id="getUserNameById" resultType="string">
+        select tb_user.username
+        from ht_user,tb_user
+        where  ht_user.user_id = #{id}
+        and tb_user.user_id = ht_user.check_user
+        and tb_user.del_status = 0
+    </select>
+
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.MeterDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.MeterEntity" id="meterMap">
+        <result property="id" column="id"/>
+        <result property="meterBoxId" column="meter_box_id"/>
+        <result property="energyMeterAssetNumber" column="energy_meter_asset_number"/>
+        <result property="accountName" column="account_name"/>
+        <result property="accountNumber" column="account_number"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="boxRelationship" column="box_relationship"/>
+        <result property="isolationSwitchAssetNumber" column="isolation_switch_asset_number"/>
+        <result property="circuitBreakerAssetNumber" column="circuit_breaker_asset_number"/>
+        <result property="transformerAssetNumber" column="transformer_asset_number"/>
+        <result property="electricEnergyMeterSeal" column="electric_energy_meter_seal"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <select id="selectByUserId" resultType="io.renren.entity.TransformerEntity">
+        select * from transformer
+        where ht_user_id = #{meterBoxId}
+        and del_status = 0
+    </select>
+
+</mapper>

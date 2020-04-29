@@ -1,0 +1,265 @@
+.wewinview {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.wewinmain {
+    position: absolute;
+    opacity: 1;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    width: 750px;
+    height: 95%;
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    -webkit-animation: into 0.2s forwards;
+    animation: into 0.2s forwards;
+    z-index: 1200;
+    border-radius: 10px;
+    padding: 7px 0px 7px 0px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #eee;
+}
+
+.wewinmain .choose {
+    text-align: center;
+}
+
+.wewinmain .choose .line {
+    overflow: hidden;
+    font-size: 0;
+    width: 50%;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    height: 30px;
+}
+
+.wewinmain .choose .line .left {
+    float: left;
+    text-align: right;
+    width: 30%;
+    font-size: 16px;
+    line-height: 30px;
+}
+
+.wewinmain .choose .line .right {
+    overflow: hidden;
+    text-align: left;
+    height: 30px;
+}
+
+.wewinmain .choose .line .right select {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    outline: none;
+}
+
+.wewinbtns {
+    width: 70%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.wewinbtn {
+    background: #5C8FFB;
+    color: #fff;
+    border: none;
+    padding: 5px 15px 5px 15px;
+    border-radius: 50px;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.wewinbtn:active {
+    background: #7EA7FC;
+}
+
+.wewinmain .wewininfo {
+    display: inline-block;
+    background: #FFEBEA;
+    padding: 3px 10px 3px 10px;
+    color: #FF3B30;
+    border: 1px solid #E9453D;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    width: 50%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.wewinmain .wewinsplit {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.wewinmain .wewinsplit2 {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    margin-top: 10px;
+}
+
+.wewinmain .bigtitle {
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.wewindown {
+    font-size: 14px;
+    width: 750px;
+    overflow: hidden;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    bottom: 0px;
+    z-index: 1300;
+    /* animation: into 0.2s forwards; */
+    background: #eee;
+    border-radius: 0 0 10px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.wewindown .left {
+    float: left;
+    padding-left: 20px;
+}
+
+.wewindown .right {
+    float: right;
+    padding-right: 20px;
+}
+
+.wewindown a {
+    color: #000;
+    text-decoration: none;
+}
+
+.wewindown a:hover {
+    text-decoration: underline;
+}
+
+.wewinmain .tags {
+    height: calc(100% - 221px);
+    overflow-y: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    /*滚动条宽度*/
+    height: 10px;
+    /*滚动条高度*/
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+/*定义滑块 内阴影+圆角*/
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(124, 124, 124);
+}
+
+.noselect {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.wewinmain #preview {
+    position: relative;
+}
+
+.wewinmain .cha {
+    position: absolute;
+    top: 5px;
+    right: 4px;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    z-index: 1300;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.rotate {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-transform-origin: left top;
+    -moz-transform-origin: left top;
+    -o-transform-origin: left top;
+    transform-origin: left top;
+}
+
+/* IE兼容 678 */
+
+@media \0screen\,screen\9 {
+    .wewinmain {
+        height: 500px;
+        margin-left: -350px;
+        margin-top: -250px;
+        overflow-y: auto;
+        border: 1px solid #000;
+    }
+    .wewindown {
+        margin-left: -350px;
+        position: relative;
+    }
+    .wewinview {
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#7fdddddd, endColorstr=#7fdddddd);
+    }
+}
+
+@-webkit-keyframes into {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate(-50%, -50%) scale(0.8);
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes into {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate(-50%, -50%) scale(0.8);
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1);
+    }
+}

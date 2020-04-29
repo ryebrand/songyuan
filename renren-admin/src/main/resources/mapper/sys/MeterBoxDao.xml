@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.MeterBoxDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.MeterBoxEntity" id="meterBoxMap">
+        <result property="id" column="id"/>
+        <result property="meterBoxAssetNumber" column="meter_box_asset_number"/>
+        <result property="taiAreaName" column="tai_area_name"/>
+        <result property="taiAreaTotalAssetNumber" column="tai_area_total_asset_number"/>
+        <result property="totalEnergyMeterSeal" column="total_energy_meter_seal"/>
+        <result property="powerSupply" column="power_supply"/>
+        <result property="meterBoxModel" column="meter_box_model"/>
+        <result property="address" column="address"/>
+        <result property="magnification" column="magnification"/>
+        <result property="meterBoxNumber" column="meter_box_number"/>
+        <result property="meterBoxAddress" column="meter_box_address"/>
+        <result property="acquisitionTerminalAssetNumber" column="acquisition_terminal_asset_number"/>
+        <result property="concentratorSeal" column="concentrator_seal"/>
+        <result property="meterBoxStatus" column="meter_box_status"/>
+        <result property="equipmentOwnerId" column="equipment_owner_id"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+    <resultMap id="baseMap" type="io.renren.modules.sys.entity.MeterBoxEntity">
+        <result property="meterBoxAssetNumber" column="meter_box_asset_number"/>
+        <result property="equipmentOwnerId" column="equipment_owner_id"/>
+    </resultMap>
+
+    <select id="getMeterBoxAssetNumberById" parameterType="Long" resultMap="baseMap">
+        select t.meter_box_asset_number,t.equipment_owner_id from meter_box t where t.id=#{id};
+    </select>
+    <select id="getMeterBoxByAssetNumber" parameterType="String" resultMap="meterBoxMap">
+        select t.id,meter_box.t,t.tai_area_name,t.tai_area_total_asset_number,t.total_energy_meter_seal,t.power_supply,t.meter_box_model,t.address,t.magnification,t.meter_box_number,t.meter_box_address,t.acquisition_terminal_asset_number,t.concentrator_seal,t.meter_box_status,t.equipment_owner_id,t.delete_status from meter_box t where t.meter_box_asset_number=#{assetNumber};
+    </select>
+
+
+    <select id="listByAssetNumberAndAddressAndTaiAreaName" resultType="io.renren.modules.sys.dto.MeterBoxDto">
+        SELECT
+        meter_box.id,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.tai_area_total_asset_number,
+        meter_box.total_energy_meter_seal,
+        meter_box.power_supply,
+        meter_box.meter_box_model,
+        meter_box.address,
+        meter_box.magnification,
+        meter_box.meter_box_number,
+        meter_box.meter_box_address,
+        meter_box.acquisition_terminal_asset_number,
+        meter_box.concentrator_seal,
+        meter_box.meter_box_status,
+        meter_box.equipment_owner_id,
+        meter_box.delete_status,
+        equipment_owner.`name`,
+        equipment_owner.phone_number
+        FROM
+        meter_box
+        LEFT JOIN equipment_owner ON meter_box.equipment_owner_id = equipment_owner.id
+        WHERE
+        1 = 1
+        <if test="assetNumber!=null and assetNumber!='' ">
+            AND meter_box.meter_box_asset_number LIKE '%${assetNumber}%'
+        </if>
+        <if test="address!=null and address!=''">
+            AND meter_box.address LIKE '%%${address}%'
+        </if>
+        <if test="taiAreaName!=null and taiAreaName!='' ">
+            AND meter_box.tai_area_name LIKE '%%${taiAreaName}%'
+        </if>
+        <if test="meterBoxStatus!=null  and meterBoxStatus!=''">
+            AND meter_box.meter_box_status IN (${meterBoxStatus})
+        </if>
+    </select>
+
+    <select id="selectIdByMeterBoxAssetNumber" resultType="long">
+        SELECT
+            meter_box.id
+        FROM
+            meter_box
+        WHERE
+            meter_box.meter_box_asset_number =#{meterBoxAssetNumber}
+    </select>
+
+    <select id="getTotalByDiv" resultType="map">
+        select t.tai_area_name,t.power_supply,count(t.id)  as total,count(null) as 'levelOne',count(null) as 'levelTwo',count(null) as 'levelThree',count(null) as 'levelFour',count(null) as 'levelFive',count(null) as 'inspectedMeter' from meter_box t group by t.tai_area_name,t.power_supply
+    </select>
+    <select id="getProcessingStatusByDiv" resultType="map">
+        select t.tai_area_name,t.power_supply,count(null) as 'pending',count(null) as 'processing',count(null) as 'processed' from meter_box t group by t.tai_area_name,t.power_supply
+    </select>
+
+
+    <select id="selectByAssetNumber" resultType="io.renren.modules.sys.dto.MeterBoxDetailsDto">
+        SELECT
+        meter_box.id,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.tai_area_total_asset_number,
+        meter_box.total_energy_meter_seal,
+        meter_box.power_supply,
+        meter_box.meter_box_model,
+        meter_box.address,
+        meter_box.magnification,
+        meter_box.meter_box_number,
+        meter_box.meter_box_address,
+        meter_box.acquisition_terminal_asset_number,
+        meter_box.concentrator_seal,
+        meter_box.meter_box_status,
+        meter_box.equipment_owner_id,
+        meter_box.delete_status,
+        meter_box.tai_area_manager_name,
+        meter_box.tai_area_manager_work_phone,
+        meter_box.tai_area_manager_phone,
+        meter_box.concentrator_asset_number,
+        equipment_owner.`name`,
+        equipment_owner.phone_number,
+        equipment_owner.studio_camera
+        FROM
+        meter_box
+        LEFT JOIN equipment_owner ON meter_box.equipment_owner_id = equipment_owner.id
+        <where>
+            <if test="assetNumber!=null and assetNumber!=''">
+                meter_box.meter_box_asset_number='${assetNumber}'
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getByUserId" resultType="io.renren.modules.sys.controller.VO.HtUserVO">
+        select ht_user.*,e.`name` from ht_user
+        left join
+        (select id,`name` from equipment_owner )e
+        on e.id = ht_user.check_user
+        WHERE
+        ht_user.del_status = 0
+        AND
+        1 = 1
+        <if test="id!=null and id!=''">
+            AND ht_user.user_id = #{id}
+        </if>
+
+    </select>
+</mapper>

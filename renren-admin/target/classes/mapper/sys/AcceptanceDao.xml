@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.AcceptanceDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.sys.entity.AcceptanceEntity" id="acceptanceMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="assetNumber" column="asset_number"/>
+        <result property="acceptanceType" column="acceptance_type"/>
+        <result property="defectDescription" column="defect_description"/>
+        <result property="buildDate" column="build_date"/>
+        <result property="regionId" column="region_id"/>
+        <result property="completionDate" column="completion_date"/>
+        <result property="malfunctionId" column="malfunction_id"/>
+        <result property="step" column="step"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <select id="getAcceptanceInfo" resultMap="acceptanceMap">
+        select t.id,t.type,t.asset_number,t.acceptance_type,t.defect_description,t.build_date,t.region_id,t.completion_date,t.malfunction_id,t.step,t.delete_status from acceptance t order by t.build_date,t.completion_date asc limit #{page},#{pageSize};
+    </select>
+    <select id="getCountByCondition" resultType="int">
+        select count(id) from acceptance
+        <where>
+            <if test="type!=null and type!=-1">
+                type=#{type}
+            </if>
+            <if test="acceptanceType!=null and acceptanceType!=-1">
+                and acceptance_type=#{acceptanceType}
+            </if>
+            <if test="regionId!=null and regionId!=-1">
+                and region_id=#{regionId}
+            </if>
+            <if test="step!=null and step!=-1">
+                and step=#{step}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectByAcceptanceId" resultType="io.renren.modules.sys.dto.AcceptanceInfoDto">
+        SELECT
+        acceptance.id,
+        acceptance.build_date,
+        acceptance.completion_date,
+        acceptance.step,
+        meter_box.meter_box_asset_number,
+        meter_box.tai_area_name,
+        meter_box.address,
+        equipment_owner.`name` AS owner_name,
+        equipment_owner.phone_number,
+        equipment_owner.studio_camera,
+        region.`name` AS region_name,
+        tb_user.`name` AS user_name,
+        tb_user.mobile,
+        malfunction.defect_level,
+        malfunction.fault_description,
+        malfunction.other_fault_description,
+        malfunction.image,
+        malfunction.processing_status
+        FROM
+        acceptance
+        LEFT JOIN meter_box ON acceptance.asset_number = meter_box.meter_box_asset_number
+        LEFT JOIN equipment_owner ON meter_box.equipment_owner_id = equipment_owner.id
+        LEFT JOIN region ON acceptance.region_id = region.id
+        LEFT JOIN tb_user ON region.user_id = tb_user.user_id
+        LEFT JOIN malfunction ON acceptance.malfunction_id = malfunction.id
+        <where>
+            <if test="id!=null">
+                acceptance.id=#{id}
+            </if>
+        </where>
+    </select>
+</mapper>

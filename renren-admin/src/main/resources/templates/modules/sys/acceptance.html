@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>验收表</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" id="time" v-model="q.buildDate" @keyup.enter="query" placeholder="请选择生成验收记录时间范围">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" id="time2" v-model="q.completionDate" @keyup.enter="query" placeholder="请选择完成验收时间范围">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" v-model="q.assetNumber" @keyup.enter="query" placeholder="请输入计量箱资产号">
+            </div>
+            <a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+			<#if shiro.hasPermission("sys:acceptance:save")>
+<!--            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+			</#if>
+			<#if shiro.hasPermission("sys:acceptance:update")>
+<!--            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>-->
+			</#if>
+			<#if shiro.hasPermission("sys:acceptance:delete")>
+<!--            <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="pendingShow" class="panel panel-default">
+        <div class="panel-heading">验收详情</div>
+        <form class="form-horizontal" style="margin: 20px 20px 20px 20px;width: 90%; padding: 10px 10px 10px 10px">
+            <div class="form-group">
+                <label  >验收状态：</label>
+                <span  v-html="acceptanceInfo.step"></span>
+            </div>
+            <div class="form-group">
+                <label  >计量箱资产号：</label>
+                <span  v-html="acceptanceInfo.meterBoxAssetNumber"></span>
+            </div>
+            <div class="form-group">
+                <label  >台区名称：</label>
+                <span  v-html="acceptanceInfo.taiAreaName"></span>
+            </div>
+            <div class="form-group">
+                <label  >地址：</label>
+                <span  v-html="acceptanceInfo.address"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人：</label>
+                <span v-html="acceptanceInfo.ownerName"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人电话：</label>
+                <span v-html="acceptanceInfo.phoneNumber"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人座机：</label>
+                <span v-html="acceptanceInfo.studioCamera"></span>
+            </div>
+            <div class="col-sm-2 control-label"></div>
+            <div class="form-group">
+                <a class="btn btn-warning" @click="reload"><i class="fa fa-arrow-left"></i>&nbsp;返回</a>
+            </div>
+        </form>
+    </div>
+    <div v-show="successShow" class="panel panel-default">
+        <div class="panel-heading">验收详情</div>
+        <form class="form-horizontal" style="margin: 20px 20px 20px 20px;width: 90%; padding: 10px 10px 10px 10px">
+            <div class="form-group">
+                <label  >验收状态：</label>
+                <span  v-html="acceptanceInfo.step"></span>
+            </div>
+            <div class="form-group">
+                <label  >计量箱资产号：</label>
+                <span  v-html="acceptanceInfo.meterBoxAssetNumber"></span>
+            </div>
+            <div class="form-group">
+                <label  >台区名称：</label>
+                <span  v-html="acceptanceInfo.taiAreaName"></span>
+            </div>
+            <div class="form-group">
+                <label  >地址：</label>
+                <span  v-html="acceptanceInfo.address"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人：</label>
+                <span v-html="acceptanceInfo.ownerName"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人电话：</label>
+                <span v-html="acceptanceInfo.phoneNumber"></span>
+            </div>
+            <div class="form-group">
+                <label  >设备责任人座机：</label>
+                <span v-html="acceptanceInfo.studioCamera"></span>
+            </div>
+            <div class="form-group">
+                <label  >验收人：</label>
+                <span v-html="acceptanceInfo.userName"></span>
+            </div>
+            <div class="form-group">
+                <label  >验收人电话：</label>
+                <span v-html="acceptanceInfo.mobile"></span>
+            </div>
+            <div class="form-group">
+                <label  >缺陷等级：</label>
+                <span v-html="acceptanceInfo.defectLevel"></span>
+            </div>
+            <div class="form-group">
+                <label  >缺陷描述：</label>
+                <span v-html="acceptanceInfo.faultDescription"></span>
+            </div>
+            <div class="form-group">
+                <label  >其他缺陷描述：</label>
+                <span v-html="acceptanceInfo.otherFaultDescription"></span>
+            </div>
+            <div class="form-group">
+                <label  >现场拍摄图片：</label>
+                <span v-html="acceptanceInfo.image"></span>
+            </div>
+            <div class="form-group">
+                <label  >缺陷处理进度：</label>
+                <span v-html="acceptanceInfo.processingStatus"></span>
+            </div>
+            <div class="col-sm-2 control-label"></div>
+            <div class="form-group">
+                <a class="btn btn-warning" @click="reload"><i class="fa fa-arrow-left"></i>&nbsp;返回</a>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<script src="${request.contextPath}/statics/plugins/layui\lay/modules/laydate/laydate.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/acceptance.js?_${.now?long}"></script>
+</body>
+</html>
