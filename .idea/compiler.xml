@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="renren-admin" />
+        <module name="renren-api" />
+        <module name="renren-common" />
+        <module name="renren-dynamic-datasource" />
+        <module name="renren-generator" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="powerdemo" target="1.8" />
+      <module name="renren-admin" target="1.8" />
+      <module name="renren-api" target="1.8" />
+      <module name="renren-common" target="1.8" />
+      <module name="renren-dynamic-datasource" target="1.8" />
+      <module name="renren-generator" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="renren-admin" options="-parameters" />
+      <module name="renren-api" options="-parameters" />
+      <module name="renren-common" options="-parameters" />
+      <module name="renren-dynamic-datasource" options="-parameters" />
+      <module name="renren-generator" options="-parameters" />
+    </option>
+  </component>
+</project>
